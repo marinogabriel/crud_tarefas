@@ -22,7 +22,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/elabbora
       SPRING_DATASOURCE_USERNAME: elabbora
       SPRING_DATASOURCE_PASSWORD: elabbora
-      JWT_SECRET: +41JdmIcIbUjUXP+hWBNLUnCSNUkmrzehwsh+qn63ms=
+      JWT_SECRET: 98943d13924e215959138d522fd9432a17a21a664c8a0c8871feb116731f2546
 
     depends_on:
       - db
