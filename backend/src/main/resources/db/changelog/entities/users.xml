@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="404ac0b0-f7b0-4d1c-bd6f-fdc3a9825844" author="gabrielMarino">
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey" />
+            </column>
+            <column name="first_name" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_name" type="text">
+                <constraints nullable="false" />
+            </column>
+            <column name="email" type="text">
+                <constraints nullable="false" unique="true" uniqueConstraintName="user__email_unique" />
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createIndex tableName="users" indexName="idx_users__email">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

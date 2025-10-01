@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="e6a1a507-035f-461c-b4c5-75a66eb893dd" author="gabrielMarino">
+        <createTable tableName="tasks">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tasks_pkey" />
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="VARCHAR(500)" />
+            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false" />
+            </column>
+            <column name="completed" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" />
+            </column>
+            <column name="task_category_id" type="UUID">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_tasks__user" />
+
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="task_category_id"
+                                 referencedTableName="task_categories"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_tasks__task_category" />
+
+    </changeSet>
+</databaseChangeLog>

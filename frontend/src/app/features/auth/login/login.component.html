@@ -1,0 +1,117 @@
+<!-- todo fix bug visual msg erro dentro do input -->
+<mat-card class="auth-card">
+  <mat-card-title>{{ isLoginMode ? 'Login' : 'Registrar' }}</mat-card-title>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Name -->
+    @if (!isLoginMode) {
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="firstName" />
+        @if (form.get('firstName')?.touched && form.get('firstName')?.invalid) {
+          <mat-error>O nome é obrigatório.</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Last name -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Sobrenome</mat-label>
+        <input matInput formControlName="lastName" />
+        @if (form.get('lastName')?.touched && form.get('lastName')?.invalid) {
+          <mat-error>O sobrenome é obrigatório.</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <!-- Email -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (form.get('email')?.touched && form.get('email')?.invalid) {
+        @if (form.get('email')?.errors?.['required']) {
+          <mat-error>O email é obrigatório.</mat-error>
+        } @else if (form.get('email')?.errors?.['email']) {
+          <mat-error>Formato de email inválido.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Senha</mat-label>
+      <input
+        matInput
+        [type]="showPassword ? 'text' : 'password'"
+        formControlName="password"
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="showPassword = !showPassword"
+        [attr.aria-label]="'Toggle password visibility'"
+        [attr.aria-pressed]="!showPassword"
+        type="button"
+      >
+        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+
+      @if (form.get('password')?.touched && form.get('password')?.invalid) {
+        @if (form.get('password')?.errors?.['required']) {
+          <mat-error>A senha é obrigatória.</mat-error>
+        } @else if (form.get('password')?.errors?.['minlength']) {
+          <mat-error>A senha deve ter no mínimo 6 caracteres.</mat-error>
+        }
+      }
+    </mat-form-field>
+
+
+    <!-- Confirm Password -->
+    @if (!isLoginMode) {
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Confirmar Senha</mat-label>
+        <input
+          matInput
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          formControlName="confirmPassword"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="showConfirmPassword = !showConfirmPassword"
+          [attr.aria-label]="'Toggle confirm password visibility'"
+          [attr.aria-pressed]="!showConfirmPassword"
+          type="button"
+        >
+          <mat-icon>
+            {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
+
+        @if (form.get('confirmPassword')?.touched && form.get('confirmPassword')?.invalid) {
+          @if (form.get('confirmPassword')?.errors?.['required']) {
+            <mat-error>Confirme sua senha.</mat-error>
+          } @else if (form.get('confirmPassword')?.errors?.['minlength']) {
+            <mat-error>A senha deve ter no mínimo 6 caracteres.</mat-error>
+          }
+        }
+
+        @if (
+          form.get('confirmPassword')?.touched &&
+          form.get('confirmPassword')?.valid &&
+          form.value.password !== form.value.confirmPassword
+          ) {
+          <mat-error>As senhas não coincidem.</mat-error>
+        }
+      </mat-form-field>
+    }
+
+    <button mat-raised-button color="primary" type="submit" class="full-width">
+      {{ isLoginMode ? 'Entrar' : 'Registrar' }}
+    </button>
+  </form>
+
+  <div class="toggle-text">
+    {{ isLoginMode ? 'Ainda não tem uma conta?' : 'Já tem uma conta?' }}
+    <a (click)="toggleMode()">{{ isLoginMode ? 'Registre-se' : 'Entrar' }}</a>
+  </div>
+</mat-card>

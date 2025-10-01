@@ -1,0 +1,14 @@
+<div class="dialog-container">
+  <h3 mat-dialog-title>
+    {{ data.title }}
+  </h3>
+  <div mat-dialog-content>
+    <p>
+      {{ data.message }}
+    </p>
+  </div>
+  <div mat-dialog-actions class="dialog-options">
+    <button mat-button (click)="onNoClick()">Não</button>
+    <button mat-button (click)="onYesClick()">Sim</button>
+  </div>
+</div>

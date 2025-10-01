@@ -1,0 +1,128 @@
+<div class="task-list-container" style="padding: 16px;">
+  <div class="actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+
+    <div>
+      <button mat-stroked-button color="primary" (click)="openNewTask()" style="margin-right: 16px">
+        <mat-icon>add</mat-icon> Adicionar tarefa
+      </button>
+      <button mat-stroked-button (click)="openCategoryModal()">
+        Gerenciar categorias
+      </button>
+    </div>
+
+    <button mat-stroked-button color="warn" (click)="logout()">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
+
+  </div>
+
+  <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+    <!-- Completed Filter -->
+    <mat-form-field appearance="fill">
+      <mat-label>Concluído</mat-label>
+      <mat-select [(ngModel)]="filters.completed" (selectionChange)="applyFilters()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value=true>Concluída</mat-option>
+        <mat-option value=false>Não concluída</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Date Range -->
+    <mat-form-field appearance="fill">
+      <mat-label>Data de início</mat-label>
+      <input matInput [matDatepicker]="startPicker" [(ngModel)]="filters.startDate" (dateChange)="applyFilters()">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Data final</mat-label>
+      <input matInput [matDatepicker]="endPicker" [(ngModel)]="filters.endDate" (dateChange)="applyFilters()">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Category -->
+    <mat-form-field appearance="fill">
+      <mat-label>Categoria</mat-label>
+      <mat-select [(ngModel)]="filters.category" (selectionChange)="applyFilters()">
+        <mat-option value="">Todas</mat-option>
+        @for (category of categories; track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button color="warn" (click)="clearFilters()">
+      Limpar filtros
+    </button>
+  </div>
+
+  @if(dataSource.length === 0) {
+    <div style="text-align: center; margin-top: 16px; color: gray;">
+      Nenhuma tarefa encontrada.
+    </div>
+  } @else {
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)" class="mat-elevation-z8">
+
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Título </mat-header-cell>
+        <mat-cell *matCellDef="let task"> {{ task.title }} </mat-cell>
+      </ng-container>
+
+      <!-- Date Column -->
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Data </mat-header-cell>
+        <mat-cell *matCellDef="let task">
+          {{ task.date | date }}
+          @if(isOverdue(task)) {
+            <span style="color: red;">&nbsp;(atrasada)</span>
+          }
+        </mat-cell>
+      </ng-container>
+
+      <!-- Category Column -->
+      <ng-container matColumnDef="categoryName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Categoria </mat-header-cell>
+        <mat-cell *matCellDef="let task"> {{ task.category.name }} </mat-cell>
+      </ng-container>
+
+      <!-- Completed Column -->
+      <ng-container matColumnDef="completed">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Concluída </mat-header-cell>
+        <mat-cell *matCellDef="let task">
+          <mat-checkbox [checked]="task.completed" (change)="toggleComplete(task)"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
+        <mat-cell *matCellDef="let task">
+          <button mat-icon-button color="accent" (click)="openEditTask(task)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="openDeleteConfirmation(task)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"
+               [ngClass]="{'overdue': isOverdue(row)}">
+      </mat-row>
+
+    </mat-table>
+
+    <mat-paginator
+      [length]="totalTasks"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[2, 5, 10, 20]"
+      showFirstLastButtons
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  }
+</div>

@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: elabbora
+      POSTGRES_USER: elabbora
+      POSTGRES_PASSWORD: elabbora
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "15432:5432"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spring-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/elabbora
+      SPRING_DATASOURCE_USERNAME: elabbora
+      SPRING_DATASOURCE_PASSWORD: elabbora
+      JWT_SECRET: +41JdmIcIbUjUXP+hWBNLUnCSNUkmrzehwsh+qn63ms=
+
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: angular-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
